@@ -12,4 +12,4 @@ Create a bunch of keys, poties and so on and call it keyboard. Functionality wil
 * Encoder - ?
 
 
-Visit http://fambach.net for more information (German Page)
+Visit http://www.fambach.net for more information (German Page)
