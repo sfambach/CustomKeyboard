@@ -54,9 +54,8 @@ void poti1Callback(int state) {
 
 void lsCallback(int state) {
   DEBUG_PRINT("LS ");
-  DEBUG_PRINT(1);
   DEBUG_PRINT(" has value ");
-  DEBUG_PRINTLN(state);
+  DEBUG_PRINTLN(state == LSButton::LONG? "LONG":"SHORT");
 }
 
 void incrCallback(int state) {
