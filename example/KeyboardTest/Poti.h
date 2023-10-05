@@ -14,16 +14,24 @@ private:
   int _value;
   int _threshold = 1;
 
+  int readValue(){
+    // 101 to reach 100%
+    return map(analogRead(_pin), 0,1024,0,101);
+  }
+
 public:
   Poti(uint8_t pin, void (*callback)(int val))
     : AbstractKeyboardElement(pin, callback) {}
  
   virtual void init() {
     pinMode(_pin, INPUT);
+    _value = readValue();
+    _callback(_value);
   };
 
   virtual void loop() {
-    int reading = map(analogRead(_pin), 0,1024,0,100);
+    
+    int reading = readValue();
 
     // If the switch changed, due to noise or pressing:
     if (reading > (_value + _threshold) || reading < (_value- _threshold)) {

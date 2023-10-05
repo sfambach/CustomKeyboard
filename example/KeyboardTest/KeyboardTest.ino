@@ -26,7 +26,7 @@ void initKeyboard(){
   keyboard.addElement(new IncrButton(A1, incrCallback));
   keyboard.addElement(new LSButton(A2,lsCallback) );
   keyboard.addElement(new IncrButton(A3, button1Callback));
-
+  keyboard.addElement(new ModeButton(A4, modeCallback));
   keyboard.setup();
 
 }
@@ -50,6 +50,11 @@ void poti1Callback(int state) {
   DEBUG_PRINT(1);
   DEBUG_PRINT(" has value ");
   DEBUG_PRINTLN(state);
+}
+
+void modeCallback(int mode) {
+  DEBUG_PRINT("mode ");
+  DEBUG_PRINTLN(mode);
 }
 
 void lsCallback(int state) {

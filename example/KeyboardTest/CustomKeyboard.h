@@ -8,6 +8,7 @@
 #include "LSButton.h"
 #include "Poti.h"
 #include "Button.h"
+#include "ModeButton.h"
 
 
 class CustomKeyboard {

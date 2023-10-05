@@ -2,27 +2,33 @@
 * Author: Stefan Fambach
 * Website: http://www.fambach.net
 */
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef MODE_BUTTON_H
+#define MODE_BUTTON_H
 #include "Arduino.h"
-#include "AbstractKeyboardElement.h"
+#include "IncrButton.h"
 
 class ModeButton : public IncrButton {
 
-private:
+protected:
 
+
+  
 
 public:
+ 
+
   ModeButton(uint8_t pin, void (*callback)(int val))
-    : AbstractKeyboardElement(pin, callback) {}
+    : IncrButton(pin, callback) {}
+
+
   virtual void init() {
     pinMode(_pin, INPUT_PULLUP);
     _step = 1;
-    _valueMax = 5;
+    _maxValue = 5;
   }
   virtual void loop() {
 
-    bool reading = digitalRead(_pin);
+   /* bool reading = digitalRead(_pin);
 
     // If the switch changed, due to noise or pressing:
     if (reading != _lastState) {
@@ -39,7 +45,15 @@ public:
         }
       }
       _stepTS = millis();
-      _callback(_value);
+
+      _curMode += _step;
+      if(_curMode > _maxMode){
+
+      } else if (_curMode < _minMode){
+        
+      }
+
+      _callback(_curMode);
     }
 
 
@@ -60,11 +74,11 @@ public:
     }
 
     // save the reading. Next time through the loop, it'll be the lastButtonState:
-    _lastState = reading;
+    _lastState = reading;*/
   }
 
 };
 
 
 
-#endif // BUTTON_H
+#endif // MODE_BUTTON_H

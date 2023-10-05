@@ -7,22 +7,36 @@
 #define INCR_BUTTON_H
 #include "Arduino.h"
 #include "AbstractKeyboardElement.h"
+enum CountMode {
+  OVERFLOW = 1,
+  REVERSE = 2,
+  STOP = 3
+};
+
 
 class IncrButton : public AbstractKeyboardElement {
 
 protected:
-  uint8_t _value;
+  int _value;
   bool _state = LOW;
   bool _lastState = LOW;
   long _bounceTS;
   long _bounceThreashold = 5;
-  bool _startOver = true;
-  uint8_t _step = 5;
-  long _stepTime = 500;
+
+
+  long _stepTime = 200;
   long _stepTS;
-  uint8_t _valueMax = 100;
+
+  int _minValue = 0;
+  int _maxValue = 100;
+  int _curValue = 0;
+  int _step = 5;
+
+  CountMode _countMode = REVERSE;
 
 public:
+
+
   IncrButton(uint8_t pin, void (*callback)(int val))
     : AbstractKeyboardElement(pin, callback) {}
   virtual void init() {
@@ -38,17 +52,35 @@ public:
       // reset the debouncing timer
       _bounceTS = millis();
     } else if (_state && millis() - _stepTime > _stepTS) {
-      _value += _step;
+      _curValue += _step;
 
-      if (_value > _valueMax) {
-        if (_startOver) {
-          _value = _step;
-        } else {
-          _value = _valueMax;
+      if (_curValue > _maxValue) {
+
+        switch (_countMode) {
+          case OVERFLOW: _curValue = _minValue; break;
+          case REVERSE:
+            _step = -_step;
+            _curValue = _maxValue + _step;
+            break;
+          case STOP:  // do nothing ;
+            _curValue = _maxValue;
+            break;
+        }
+      } else if (_curValue < _minValue) {
+
+        switch (_countMode) {
+          case OVERFLOW:  // nothing to do
+            break;
+          case REVERSE:
+            _step = -_step;
+            _curValue = _minValue + _step;
+            break;
+          case STOP:  // do nothing ;
+            break;
         }
       }
       _stepTS = millis();
-      _callback(_value);
+      _callback(_curValue);
     }
 
 
@@ -59,12 +91,12 @@ public:
         _state = !reading;
 
         if (_state) {
-          _value = _step;
+          _curValue = _step;
           _stepTS = millis();
         } else {
-          _value = 0;
+          _curValue = 0;
         }
-        _callback(_value);
+        _callback(_curValue);
       }
     }
 
