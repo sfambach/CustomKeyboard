@@ -9,25 +9,31 @@
 
 class Button : public AbstractKeyboardElement {
 
-private:
+protected:
 
-  bool _state = LOW;
-  bool _lastState = LOW;
-  long _bounceTS;
-  long _bounceThreashold = 5;
+  virtual void readPin() {
+    _reading = digitalRead(_pin);
+    if (_invert) {
+      _reading = !_reading;
+    }
+  }
 
 public:
   Button(uint8_t pin, void (*callback)(int val))
     : AbstractKeyboardElement(pin, callback) {}
+
   virtual void init() {
     pinMode(_pin, INPUT_PULLUP);
+    readPin();
+    _curValue = _lastValue = _reading;
   }
+
   virtual void loop() {
 
-    bool reading = digitalRead(_pin);
+    readPin();
 
     // If the switch changed, due to noise or pressing:
-    if (reading != _lastState) {
+    if (_reading != _lastValue) {
       // reset the debouncing timer
       _bounceTS = millis();
     }
@@ -35,17 +41,17 @@ public:
     if ((millis() - _bounceTS) > _bounceThreashold) {
 
       // if the button state has changed:
-      if (reading == _state) {
-        _state = !reading;
-        _callback(_state);
+      if (_reading != _curValue) {
+        _curValue = _reading;
+        callCallback();
       }
     }
 
     // save the reading. Next time through the loop, it'll be the lastButtonState:
-    _lastState = reading;
+    _lastValue = _reading;
   }
 };
 
 
 
-#endif // BUTTON_H
+#endif  // BUTTON_H

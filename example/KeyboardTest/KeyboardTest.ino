@@ -21,19 +21,25 @@
 CustomKeyboard keyboard(6);
 
 void initKeyboard(){
-  //keyboard = new OrganKeyboard(6);
+  //keyboard = new CustomKeyboard(6);
   keyboard.addElement(new Poti(A0, poti1Callback));
-  keyboard.addElement(new IncrButton(A1, incrCallback));
+  keyboard.addElement(new Button(A1, button1Callback));
   keyboard.addElement(new LSButton(A2,lsCallback) );
-  keyboard.addElement(new IncrButton(A3, button1Callback));
-  keyboard.addElement(new ModeButton(A4, modeCallback));
+  keyboard.addElement(new IncrButton(A3, incrCallback));
+
+
+  IncrButton* mode =  new IncrButton(A4, modeCallback, RESET , 0, 6, 1);
+  mode->setBounceThreshold(100);
+  mode->setStepTime(2000);
+  keyboard.addElement(mode);
+  
   keyboard.setup();
 
 }
 
 /******************************************************************************************/
 // callbacks
-void button1Callback(int state) {
+void button1Callback(AbstractKeyboardElement* button, int state) {
   DEBUG_PRINT("Button");
   DEBUG_PRINT(1);
   DEBUG_PRINT(" is ");
@@ -45,25 +51,34 @@ void button1Callback(int state) {
   }
 }
 
-void poti1Callback(int state) {
+void poti1Callback(AbstractKeyboardElement* element,int state) {
   DEBUG_PRINT("Poti ");
   DEBUG_PRINT(1);
   DEBUG_PRINT(" has value ");
   DEBUG_PRINTLN(state);
 }
 
-void modeCallback(int mode) {
-  DEBUG_PRINT("mode ");
-  DEBUG_PRINTLN(mode);
+void modeCallback(AbstractKeyboardElement* button, int mode) {
+
+  switch(mode){
+    case 0: DEBUG_PRINTLN("Fountain 1 started");break;
+    case 1: DEBUG_PRINTLN("Fountain 2 started");break;
+    case 2: DEBUG_PRINTLN("Fountain 3 started");break;
+    case 3: DEBUG_PRINTLN("Fountain 4 started");break;
+    case 4: DEBUG_PRINTLN("Fountain 5 started");break;
+    case 5: DEBUG_PRINTLN("Fountain 6 started");break;
+    case 6: DEBUG_PRINTLN("Manual Mode");break;
+
+  }
 }
 
-void lsCallback(int state) {
+void lsCallback(AbstractKeyboardElement* button, int state) {
   DEBUG_PRINT("LS ");
   DEBUG_PRINT(" has value ");
   DEBUG_PRINTLN(state == LSButton::LONG? "LONG":"SHORT");
 }
 
-void incrCallback(int state) {
+void incrCallback(AbstractKeyboardElement* button, int state) {
   DEBUG_PRINT("LS ");
   DEBUG_PRINT(1);
   DEBUG_PRINT(" has value ");

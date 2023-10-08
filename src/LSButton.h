@@ -5,19 +5,11 @@
 #ifndef LS_BUTTON_H
 #define LS_BUTTON_H
 #include "Arduino.h"
-#include "AbstractKeyboardElement.h"
+#include "Button.h"
 
-class LSButton : public AbstractKeyboardElement {
+class LSButton : public Button {
 
-private:
 
-  uint8_t value = SHORT;
-  bool _state = LOW;
-  bool _lastState = LOW;
-  long _bounceTS;
-  long _bounceThreashold = 5;
-  long _longPressTime = 500;  // default is 3 seconds
-  long _pressTS;
 
 public:
 
@@ -25,16 +17,20 @@ public:
   static const uint8_t LONG = 0x11;
 
   LSButton(uint8_t pin, void (*callback)(int val))
-    : AbstractKeyboardElement(pin, callback) {}
-  virtual void init() {
-    pinMode(_pin, INPUT_PULLUP);
+    : Button(pin, callback) {}
+
+  virtual void callCallback() {
+    if (_callback != NULL) {
+      _callback(this, _lastPress);
+    }
   }
+
   virtual void loop() {
 
-    bool reading = digitalRead(_pin);
+    readPin();
 
     // If the switch changed, due to noise or pressing:
-    if (reading != _lastState) {
+    if (_reading != _lastValue) {
       // reset the debouncing timer
       _bounceTS = millis();
     }
@@ -43,25 +39,33 @@ public:
     if ((millis() - _bounceTS) > _bounceThreashold) {
 
       // if the button state has changed:
-      if (reading == _state) {
-        _state = !reading;
+      if (_reading != _curValue) {
+        _curValue = _reading;
 
 
-        if (_state) {  // if state is high then start measure
+        if (_curValue) {  // if state is high then start measure
           _pressTS = millis();
         } else {  // if state is low then check measurement
           if (millis() > _pressTS + _longPressTime) {
-            _callback(LONG);
+            _lastPress = LONG;
           } else {
-            _callback(SHORT);
+            _lastPress = SHORT;
           }
+          callCallback();
         }
       }
     }
 
     // save the reading. Next time through the loop, it'll be the lastButtonState:
-    _lastState = reading;
+    _lastValue = _reading;
   }
+
+  protected:
+
+  uint8_t _lastPress;
+  long _pressTS;
+  long _longPressTime = 500;  // default is 3 seconds
+
 };
 
 

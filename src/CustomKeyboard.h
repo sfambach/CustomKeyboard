@@ -4,12 +4,12 @@
 
 #include "Arduino.h"
 #include "AbstractKeyboardElement.h"
-#include "IncrButton.h"
+#include "Button.h"
 #include "LSButton.h"
 #include "Poti.h"
-#include "Button.h"
-#include "ModeButton.h"
-
+#include "IncrButton.h"
+/*#include "ModeButton.h"
+*/
 
 class CustomKeyboard {
 

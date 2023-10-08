@@ -9,37 +9,34 @@
 
 class Poti : public AbstractKeyboardElement {
 
-private:
-
-  int _value;
+protected:
+  
   int _threshold = 1;
 
-  int readValue(){
-    // 101 to reach 100%
-    return map(analogRead(_pin), 0,1024,0,101);
+  void readPin() override{  
+    _reading = map(analogRead(_pin), 0,1024,0,101);
   }
 
+  
 public:
-  Poti(uint8_t pin, void (*callback)(int val))
+  Poti(uint8_t pin, void (*callback)(AbstractKeyboardElement* element, int val))
     : AbstractKeyboardElement(pin, callback) {}
  
   virtual void init() {
     pinMode(_pin, INPUT);
-    _value = readValue();
-    _callback(_value);
+    _curValue = _lastValue = _reading;
+    callCallback();
   };
 
   virtual void loop() {
     
-    int reading = readValue();
+   readPin();
 
     // If the switch changed, due to noise or pressing:
-    if (reading > (_value + _threshold) || reading < (_value- _threshold)) {
-   
-      _value = reading;
-      //_callback(map (_value, 0 , 255, 0, 100));
-      _callback(_value);
-      
+    if (_reading > (_curValue + _threshold) || _reading < (_curValue- _threshold)) {
+      _lastValue = _curValue;
+      _curValue = _reading;
+      callCallback();
     }
 
   }

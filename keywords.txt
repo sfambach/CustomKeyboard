@@ -1,0 +1,7 @@
+Poti	KEYWORD1
+Button	KEYWORD1
+LSButton	KEYWORD1
+IncrButton	KEYWORD1
+CustomKeyboard	KEYWORD1
+loop	KEYWORD2
+setup	KEYWORD2 
