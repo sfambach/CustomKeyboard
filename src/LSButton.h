@@ -16,7 +16,7 @@ public:
   static const uint8_t SHORT = 0x01;
   static const uint8_t LONG = 0x11;
 
-  LSButton(uint8_t pin, void (*callback)(int val))
+  LSButton(uint8_t pin, void (*callback)(AbstractKeyboardElement* element, int val))
     : Button(pin, callback) {}
 
   virtual void callCallback() {

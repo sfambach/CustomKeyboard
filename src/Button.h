@@ -19,7 +19,7 @@ protected:
   }
 
 public:
-  Button(uint8_t pin, void (*callback)(int val))
+  Button(uint8_t pin, void (*callback)(AbstractKeyboardElement* element, int val))
     : AbstractKeyboardElement(pin, callback) {}
 
   virtual void init() {
