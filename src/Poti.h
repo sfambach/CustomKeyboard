@@ -40,6 +40,16 @@ public:
     }
 
   }
+  
+  void setThreshold(int threshold ){
+	  this->_threshold = threshold;
+  }
+  
+    
+  int getThreshold(){
+	  return this->_threshold;
+  }
+  
 };
 
 
