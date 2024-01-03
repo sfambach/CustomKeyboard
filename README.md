@@ -12,4 +12,9 @@ Create a bunch of keys, poties and so on and call it keyboard. Functionality wil
 * Encoder - ?
 
 
+## Changes
+2024.01.03 - Correction for analog values of ESP32 in poti Class
+
+
+
 Visit http://www.fambach.net for more information (German Page)
