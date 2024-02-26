@@ -7,6 +7,16 @@
 #define ABSTRACT_KEYBOARD_ELEMENT_H
 #include "Arduino.h"
 
+#ifdef ESP8266	
+  // nothing special now
+#elif defined ESP32
+  // setting PWM properties
+  const int freq = 5000;
+  const int ledChannel = 0;
+  const int resolution = 8;
+#else 
+  // nothing special now
+#endif
 
 class AbstractKeyboardElement {
 
@@ -14,7 +24,7 @@ public:
 
   /** default constructor
   */
-  AbstractKeyboardElement(uint8_t pin, void (*callback)(AbstractKeyboardElement* button, int val))
+  AbstractKeyboardElement(uint8_t pin, void (*callback)(AbstractKeyboardElement* button, int val)= NULL)
     : _pin(pin), _callback(callback) {}
 
   /** method should be called in setup funktion
@@ -61,21 +71,41 @@ public:
   * e.g. for a button to deliver on when its off
   */
   void setInvert(bool val) {
-    this->_invert = val;
+    _invert = val;
   }
 
-  /** get the current bounce threshold
-  */
-  int getBounceThreshold() {
-    return _bounceThreashold;
+  void analogReadPin(){  
+    #ifdef ESP8266	
+	_reading = map(analogRead(_pin), 0,1024,0,101);
+    #elif defined ESP32
+	_reading = map(analogRead(_pin), 0,4096,0,101);
+    #else 
+	_reading = map(analogRead(_pin), 0,1024,0,101);
+    #endif
   }
 
-  /** set the threshold of the dbouncing, 
-  * time until a state change is valid
-  * @value threshold time in ms
-  */
-  void setBounceThreshold(int threshold) {
-    this->_bounceThreashold = threshold;
+  void analogWritePin(){  
+    #ifdef ESP8266	
+      analogWrite(_curValue);
+    #elif defined ESP32
+	      _reading = map(analogRead(_pin), 0,4096,0,101);
+    #else 
+    analogWrite(_curValue);
+	
+    #endif
+  }
+
+  void ditalReadPin() {  
+   _reading = digitalRead(_pin);
+  }
+
+  void digitalWritePin(){
+    digitalWrite(_curValue);
+  }
+
+  void analogWritePin(){
+    analog
+    digitalWrite(_curValue);
   }
 
 protected:
@@ -83,18 +113,17 @@ protected:
   int _curValue;
   int _lastValue;
   int _reading;
-  long _bounceTS;
-  long _bounceThreashold = 5;
+  bool _invert = false;
 
-  void (*_callback)(AbstractKeyboardElement* button, int val) = NULL;
-  bool _invert = true;
+  void (*_callback)(AbstractKeyboardElement* button, int val)= NULL;
 
   virtual void callCallback() {
     if (_callback != NULL) {
       _callback(this, _curValue);
     }
   }
-  virtual void readPin() = 0;
+
+  
 };
 
 

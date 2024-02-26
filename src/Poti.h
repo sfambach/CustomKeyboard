@@ -13,15 +13,7 @@ protected:
   
   int _threshold = 1;
 
-  void readPin() override{  
-    #ifdef ESP8266	
-	_reading = map(analogRead(_pin), 0,1024,0,101);
-    #elif defined ESP32
-	_reading = map(analogRead(_pin), 0,4096,0,101);
-    #else 
-	_reading = map(analogRead(_pin), 0,1024,0,101);
-    #endif
-  }
+  
 
   
 public:
@@ -36,7 +28,7 @@ public:
 
   virtual void loop() {
     
-   readPin();
+   analogReadPin();
 
     // If the switch changed, due to noise or pressing:
     if (_reading > (_curValue + _threshold) || _reading < (_curValue- _threshold)) {

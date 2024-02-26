@@ -9,21 +9,23 @@
 
 class LSButton : public Button {
 
-
-
 public:
 
   static const uint8_t SHORT = 0x01;
   static const uint8_t LONG = 0x11;
 
-  LSButton(uint8_t pin, void (*callback)(AbstractKeyboardElement* element, int val))
-    : Button(pin, callback) {}
+  LSButton(uint8_t pin, long longPressTimeMs = 500, void (*callback)(AbstractKeyboardElement* element, int val)= NULL, uint8_t pinMode = INPUT_PULLUP)
+    : Button(pin, callback, pinMode), _longPressTime(longPressTimeMs) {}
 
   virtual void callCallback() {
     if (_callback != NULL) {
       _callback(this, _lastPress);
     }
   }
+
+  virtual void setLongPressTime(long timeMs){
+    _longPressTime = timeMs;
+  } 
 
   virtual void loop() {
 
