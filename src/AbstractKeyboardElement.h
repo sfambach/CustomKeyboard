@@ -84,28 +84,27 @@ public:
     #endif
   }
 
-  void analogWritePin(){  
+  /*void analogWritePin(){  
     #ifdef ESP8266	
-      analogWrite(_curValue);
+      analogWrite(_pin, _curValue);
     #elif defined ESP32
 	      _reading = map(analogRead(_pin), 0,4096,0,101);
     #else 
-    analogWrite(_curValue);
+		analogWrite(_pin, _curValue);
 	
     #endif
-  }
+  }*/
 
-  void ditalReadPin() {  
+  void digitalReadPin() {  
    _reading = digitalRead(_pin);
   }
 
   void digitalWritePin(){
-    digitalWrite(_curValue);
+    digitalWrite(_pin, _curValue);
   }
 
   void analogWritePin(){
-    analog
-    digitalWrite(_curValue);
+	analogWrite(_pin, _curValue);
   }
 
 protected:
