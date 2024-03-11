@@ -14,92 +14,68 @@ Callback method
 * Author:  S. Fambach
 Visit http://www.fambach.net if you want
 ******************************************************************************/
-
-/*****************************************************************************/
-// Debuging
-
-#define DEBUG
-#ifdef DEBUG
-#define DEBUG_PRINTLN(x) Serial.println(x)
-#define DEBUG_PRINT(x) Serial.print(x)
-#else
-#define DEBUG_PRINTLN(x)
-#define DEBUG_PRINT(x)
-#endif
-
-
-/*****************************************************************************/
-// Button Setup
-#define BUTTON1_SW_PIN 15
-#define BUTTON1_LIGHT_PIN 2 
-
-#define BUTTON2_SW_PIN 17
-#define BUTTON2_LIGHT_PIN 16 
-
-#define BUTTON3_SW_PIN 22
-#define BUTTON3_LIGHT_PIN 21 
-
-
-/*****************************************************************************/
-// Create a one button keyboard ;) 
+// Create a keyboard 
+#include "joystick_settings.h"
 #include"CustomKeyboard.h"
 #include"LightButton.h"
 #include"Button.h"
 
-// create a keyboard with one element
 
-const uint8_t LIGHT_LS_BUTTON = 16;
-
-
-CustomKeyboard keyBoard(11);
+CustomKeyboard keyBoard(10);
 
 // create a variable for the game button
-Button* gb0;
+LightButton* player;
 LightButton* gb1;
-LightButton* gb2;
-LightButton* gb3;
-LightButton* gb4;
-LightButton* gb5;
-LightButton* gb6;
+LightButton* coin;
+LightButton* button1;
+LightButton* button2;
+LightButton* button3;
+LightButton* button4;
 
-Button* joy1;
-Button* joy2;
-Button* joy3;
-Button* joy4;
+Button* joyUp;
+Button* joyDown;
+Button* joyLeft;
+Button* joyRight;
 
 
 // declare the callback for the button
 void initKeyboard(){
 
-  // create a game button
-  gb0 = new LSButton(15, 2000, &button0Callback, INPUT_PULLDOWN);
-  
-  gb1 = new LightButton(18, 19, LightMode::ALLWAYS_RELEASED_ON, &button1Callback, INPUT_PULLDOWN);
-  gb2 = new LightButton(16, 17, LightMode::ALLWAYS_RELEASED_ON, &button2Callback, INPUT_PULLDOWN);
-  gb3 = new LightButton(21, 22, LightMode::ALLWAYS_RELEASED_ON, &button3Callback, INPUT_PULLDOWN);
-  gb4 = new LightButton(13, 12, LightMode::ALLWAYS_RELEASED_ON, &button4Callback, INPUT_PULLDOWN);
-  gb5 = new LightButton(27, 26, LightMode::ALLWAYS_RELEASED_ON, &button5Callback, INPUT_PULLDOWN);
-  gb6 = new LightButton(33, 25, LightMode::ALLWAYS_RELEASED_ON, &button6Callback, INPUT_PULLDOWN);
 
-  joy1 = new Button(32,  &joyCallback, INPUT_PULLUP);
-  joy2 = new Button(35,  &joyCallback, INPUT_PULLUP);
-  joy3 = new Button(34,  &joyCallback, INPUT_PULLUP);
-  joy4 = new Button(39,  &joyCallback, INPUT_PULLUP);
+  // create a game button
+  //gb0 = new LSButton(15, 2000, &button0Callback, INPUT_PULLDOWN);
+
+  coin = new LightButton(COIN_SW, COIN_LIGHT, LightMode::ALLWAYS_ON, &coinCallback, INPUT_PULLDOWN);
+  player = new LightButton(PLAYER_SW, PLAYER_LIGHT, LightMode::ALLWAYS_ON, &playerCallback, INPUT_PULLDOWN);
+  
+  button1 = new LightButton(BUTTON1_SW, BUTTON1_LIGHT, LightMode::ALLWAYS_RELEASED_ON, &button1Callback, INPUT_PULLDOWN);
+  button2 = new LightButton(BUTTON2_SW, BUTTON2_LIGHT, LightMode::ALLWAYS_RELEASED_ON, &button2Callback, INPUT_PULLDOWN);
+  button3 = new LightButton(BUTTON3_SW, BUTTON3_LIGHT, LightMode::ALLWAYS_RELEASED_ON, &button3Callback, INPUT);
+  button4 = new LightButton(BUTTON4_SW, BUTTON4_LIGHT, LightMode::ALLWAYS_RELEASED_ON, &button4Callback, INPUT_PULLDOWN);
+ // gb6 = new LightButton(33, 25, LightMode::ALLWAYS_RELEASED_ON, &button6Callback, INPUT_PULLDOWN);
+
+  joyUp = new Button(UP_SW,  &joyCallback, INPUT_PULLUP);
+  joyDown = new Button(DOWN_SW,  &joyCallback, INPUT_PULLUP);
+  joyLeft = new Button(LEFT_SW,  &joyCallback, INPUT_PULLUP);
+  joyRight = new Button(RIGHT_SW,  &joyCallback, INPUT_PULLUP);
 
 
   // add the button to the keyboard
-  keyBoard.addElement(gb0);
-  keyBoard.addElement(gb1);
-  keyBoard.addElement(gb2);
-  keyBoard.addElement(gb3);
-  keyBoard.addElement(gb4);
-  keyBoard.addElement(gb5);
-  keyBoard.addElement(gb6);
+  
+  keyBoard.addElement(button1);
+  keyBoard.addElement(button2);
+  keyBoard.addElement(button3);
+  keyBoard.addElement(button4);
+  //keyBoard.addElement(gb6);
 
-  keyBoard.addElement(joy1);
-  keyBoard.addElement(joy2);
-  keyBoard.addElement(joy3);
-  keyBoard.addElement(joy4);
+  keyBoard.addElement(player);
+  keyBoard.addElement(coin);
+
+
+  keyBoard.addElement(joyUp);
+  keyBoard.addElement(joyDown);
+  keyBoard.addElement(joyLeft);
+  keyBoard.addElement(joyRight);
 
   keyBoard.setup();
 }
@@ -118,9 +94,10 @@ void loopWifi(){
 // Call back action 
 int counter = 0;
 bool toggle = false;
-void button0Callback(AbstractKeyboardElement* element, int val){
-
-    DEBUG_PRINT("Button 0 = ");
+void coinCallback(AbstractKeyboardElement* element, int val){
+    log_v("Coin Button = %s", (val?"ON":"OFF"));
+    
+    /*DEBUG_PRINT("Button 0 = ");
     if(val == LSButton::SHORT){
         DEBUG_PRINT( "Short");
     } else if(val == LSButton::LONG){
@@ -133,52 +110,45 @@ void button0Callback(AbstractKeyboardElement* element, int val){
         } else {
           WiFi.mode(WIFI_MODE_STA);
           WiFi.disconnect(false);
-        }*/
+        }
     } else {
         DEBUG_PRINT( "off");
     }
-    DEBUG_PRINTLN("");
+    DEBUG_PRINTLN("");*/
+}
+
+void playerCallback(AbstractKeyboardElement* element, int val){
+  log_v("Player Button = %s", (val?"ON":"OFF"));
 }
 
 void button1Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 1 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
+  log_v("Button 1= %s", (val?"ON":"OFF")); 
 }
+
 void button2Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 2 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
+  log_v("Button 2 = %s", (val?"ON":"OFF"));
 }
 void button3Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 3 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
+  log_v("Button 3 = %s", (val?"ON":"OFF"));
 }
 void button4Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 4 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
-}
-void button5Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 5 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
-}
-void button6Callback(AbstractKeyboardElement* element, int val){
-    DEBUG_PRINT("Button 6 = ");
-    DEBUG_PRINTLN( (val?"ON":"OFF"));
+  log_v("Button 4 Button = %s", (val?"ON":"OFF"));
 }
 
 
 void joyCallback(AbstractKeyboardElement* element, int val){
   if(val){
-    DEBUG_PRINTLN("Center");
+    log_v("Center");
     return;
   }
-    if(element == joy1){
-      DEBUG_PRINTLN("RIGHT");
-    } else if(element == joy2){
-      DEBUG_PRINTLN("UP");
-    } else if(element == joy3){
-      DEBUG_PRINTLN("DOWN");
-    } else if(element == joy4){
-      DEBUG_PRINTLN("LEFT");
+    if(element == joyUp){
+      log_v("UP");
+    } else if(element == joyDown){
+      log_v("DOWN");
+    } else if(element == joyLeft){
+      log_v("LEFT");
+    } else if(element == joyRight){
+      log_v("RIGHT");
     }
 }
 
@@ -189,7 +159,7 @@ void joyCallback(AbstractKeyboardElement* element, int val){
 
 void setup() {
   Serial.begin(115200);
-  DEBUG_PRINTLN("Setup");
+  log_v("Setup");
 
   // init the keyboard and its buttons
   initKeyboard();

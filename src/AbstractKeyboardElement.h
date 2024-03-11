@@ -88,7 +88,8 @@ public:
     #ifdef ESP8266	
       analogWrite(_curValue);
     #elif defined ESP32
-	      _reading = map(analogRead(_pin), 0,4096,0,101);
+	  analogWrite(_curValue);
+	  //_reading = map(analogRead(_pin), 0,4096,0,101);
     #else 
     analogWrite(_curValue);
 	
