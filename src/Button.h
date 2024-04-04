@@ -1,4 +1,4 @@
-#include "esp32-hal-gpio.h"
+
 /** Simple pushbutton
 * Author: Stefan Fambach
 * Website: http://www.fambach.net
@@ -7,6 +7,11 @@
 #define BUTTON_H
 #include "Arduino.h"
 #include "AbstractKeyboardElement.h"
+
+#ifdef ESP32
+	#include "esp32-hal-gpio.h"
+#endif
+
 
 class Button : public AbstractKeyboardElement {
 
